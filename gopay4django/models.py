@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+
 class Payment(models.Model):
     uuid = models.CharField(_("UUID"), max_length=64, blank=True, null=True)
     date = models.DateTimeField(_("Date"), auto_now_add=True)
@@ -25,12 +26,14 @@ class Payment(models.Model):
 
     def _set_payment_command(self, value):
         self._payment_command = json.dumps(dict(value))
+
     def _get_payment_command(self):
         return json.loads(self._payment_command)
     payment_command = property(_get_payment_command, _set_payment_command)
 
     def _set_payment_status(self, value):
         self._payment_status = json.dumps(dict(value))
+
     def _get_payment_status(self):
         return json.loads(self._payment_status)
     payment_status = property(_get_payment_status, _set_payment_status)
@@ -42,4 +45,3 @@ class Payment(models.Model):
     @property
     def payment_channel(self):
         return self.payment_status.get('paymentChannel')
-

@@ -34,21 +34,21 @@ def parse_dependency_links(file_name):
 
 
 setup(
-    name = "gopay4django",
-    version = "0.1",
-    author = "Adam Strauch",
-    author_email = "cx@initd.cz",
-    description = ("GoPay API v2.3 for Django"),
-    license = "BSD",
-    keywords = "gopay",
-    url = "https://github.com/creckx/gopay4django",
+    name="gopay4django",
+    version="0.1",
+    author="Adam Strauch",
+    author_email="cx@initd.cz",
+    description=("GoPay API v2.3 for Django"),
+    license="BSD",
+    keywords="gopay",
+    url="https://github.com/creckx/gopay4django",
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     long_description="GoPay API implementation for Django.",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
         "License :: OSI Approved :: BSD License",
-        ],
-    install_requires = parse_requirements('requirements.txt'),
-    dependency_links = parse_dependency_links('requirements.txt'),
+    ],
+    install_requires=parse_requirements('requirements.txt'),
+    dependency_links=parse_dependency_links('requirements.txt'),
 )

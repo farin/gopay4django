@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.shortcuts import get_object_or_404
 from suds.client import Client
 from types import NoneType
 from gopay4django.crypt import GoCrypt
@@ -25,8 +24,9 @@ SIGNATURES = {
     # returned status result
     "status_result": ["productName", "totalPrice", "currency", "orderNumber", "recurrentPayment", "parentPaymentSessionId", "preAuthorization", "result", "sessionState", "sessionSubState", "paymentChannel"],
     # when user comes back to success url
-    "identity": ["paymentSessionId", "parentPaymentSessionId", "orderNumber"], # when user is returned back
+    "identity": ["paymentSessionId", "parentPaymentSessionId", "orderNumber"],  # when user is returned back
 }
+
 
 class GoPayException(Exception):
     pass
@@ -65,9 +65,9 @@ class Signature(object):
     def _create_signature(self, parms, encoded=True):
         long_string = "|".join(parms)
         gocrypt = GoCrypt()
-        #print "Long string:".ljust(25), long_string
-        #print "Hash:".ljust(25), gocrypt.hash(long_string)
-        #print "Encrypted hash:".ljust(25), gocrypt.encrypt_pydes(long_string)
+        # print "Long string:".ljust(25), long_string
+        # print "Hash:".ljust(25), gocrypt.hash(long_string)
+        # print "Encrypted hash:".ljust(25), gocrypt.encrypt_pydes(long_string)
         if encoded:
             signature = gocrypt.encrypt_pydes(long_string)
         else:
@@ -76,12 +76,12 @@ class Signature(object):
 
     def verify_signature(self, signature1, signature2):
         crypt = GoCrypt()
-        #print "My ph1", signature1
-        #print "Go ph1", signature2
+        # print "My ph1", signature1
+        # print "Go ph1", signature2
         signature1 = crypt.decrypt_pydes(signature1)
         signature2 = crypt.decrypt_pydes(signature2)
-        #print "My ph2", signature1
-        #print "Go ph2", signature2
+        # print "My ph2", signature1
+        # print "Go ph2", signature2
         if signature1 != signature2:
             raise GoPayException("Error: signatures dont't match")
         return True
@@ -178,7 +178,7 @@ class GoPay(object):
         downloaded_methods = client.service.paymentMethodList()
         methods = {}
         for method in downloaded_methods:
-            #if method["offline"]: continue
+            # if method["offline"]: continue
             methods[method["code"]] = {
                 "name": method["paymentMethod"],
                 "description": method["description"],
@@ -190,30 +190,29 @@ class GoPay(object):
         return methods
 
     def create_payment(self,
-                          productName,
-                          totalPrice,
-                          currency,
-                          firstName,
-                          lastName,
-                          city,
-                          street,
-                          postalCode,
-                          countryCode,
-                          email,
-                          phoneNumber,
-                          preAuthorization=False,
-                          recurrentPayment=False,
-                          recurrenceDateTo=None,
-                          recurrenceCycle=None,
-                          recurrencePeriod=None,
-                          defaultPaymentChannel=settings.GOPAY_DEFAULT_PAYMENT_CHANNEL,
-                          lang=settings.GOPAY_LANG,
-                          p1=None,
-                          p2=None,
-                          p3=None,
-                          p4=None,
-                          name="",
-                        ):
+                       productName,
+                       totalPrice,
+                       currency,
+                       firstName,
+                       lastName,
+                       city,
+                       street,
+                       postalCode,
+                       countryCode,
+                       email,
+                       phoneNumber,
+                       preAuthorization=False,
+                       recurrentPayment=False,
+                       recurrenceDateTo=None,
+                       recurrenceCycle=None,
+                       recurrencePeriod=None,
+                       defaultPaymentChannel=settings.GOPAY_DEFAULT_PAYMENT_CHANNEL,
+                       lang=settings.GOPAY_LANG,
+                       p1=None,
+                       p2=None,
+                       p3=None,
+                       p4=None,
+                       name=""):
 
         payment = Payment()
         payment.name = name
@@ -231,7 +230,7 @@ class GoPay(object):
         payment_command = {
             "targetGoId": int(self.goid),
             "productName": productName,
-            "totalPrice": int(totalPrice*100),
+            "totalPrice": int(totalPrice * 100),
             "currency": currency,
             "orderNumber": payment.id,
             "failedURL": "%s%s" % (settings.GOPAY_DOMAIN, reverse("gopay_failed")),
@@ -248,7 +247,7 @@ class GoPay(object):
             "p3": p3,
             "p4": p4,
             "lang": lang,
-            }
+        }
         signature = Signature()
         command_signature = signature.create_command_signature(payment_command)
         client_data = {

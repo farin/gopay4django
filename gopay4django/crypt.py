@@ -36,6 +36,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
+
 class GoCrypt(object):
     """ takes care of hashing, encryption and decrypting of commands"""
 
@@ -51,9 +52,6 @@ class GoCrypt(object):
         hashed_command = self.hash(command)
         des = DES3.new(self.secret, DES3.MODE_ECB)
         result = des.encrypt(hashed_command)
-        print result
-        print dir(result)
-        print result.encode('hex')
         return result.encode('hex')
 
     def encrypt_pydes(self, command):

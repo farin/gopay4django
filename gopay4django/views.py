@@ -1,11 +1,10 @@
 import datetime
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from gopay4django.api import GoPayException, GoPay, Signature
-from gopay4django.crypt import GoCrypt
 from gopay4django.models import Payment
 from gopay4django.signals import payment_changed
+
 
 def check(request):
     targetGoId = request.GET.get("targetGoId")
@@ -31,6 +30,7 @@ def check(request):
     payment_changed.send(sender=request, payment=payment)
     return payment
 
+
 def get_payment_uuid(request, payment):
     if not payment:
         try:
@@ -41,6 +41,7 @@ def get_payment_uuid(request, payment):
     if payment:
         return payment.uuid
     return None
+
 
 def success(request):
     payment = None
@@ -58,6 +59,7 @@ def failed(request):
     except GoPayException:
         pass
     return HttpResponseRedirect("%s?payment_uuid=%s" % (settings.GOPAY_FAILED_URL, get_payment_uuid(request, payment)))
+
 
 def notify(request):
     try:
