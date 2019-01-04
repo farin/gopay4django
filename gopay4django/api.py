@@ -1,10 +1,17 @@
 # -*- coding: utf-8 -*-
+import sys
+
 from django.conf import settings
-from django.core.urlresolvers import reverse
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 from suds.client import Client
-from types import NoneType
 from gopay4django.crypt import GoCrypt
 from gopay4django.models import Payment
+
+if sys.version_info > (3,):
+    long = int
 
 VALID_CURRENCY = ["CZK", "EUR"]
 VALID_LANGS = ["CZE"]
@@ -41,22 +48,20 @@ class Signature(object):
         new_parms = []
         new_parms.append("%d" % self.goid)
         for parm in parms:
-            if type(parm) == bool:
-                new_parms.append("1" if parm else "0")
-            elif type(parm) == NoneType:
+            if parm is None or parm == "null" or parm == "None":
                 new_parms.append("")
-            elif type(parm) == int or type(parm) == long:
+            elif isinstance(parm, bool):
+                new_parms.append("1" if parm else "0")
+            elif isinstance(parm, (int, long)):
                 new_parms.append("%d" % parm)
-            elif type(parm) == float:
+            elif isinstance(parm, float):
                 new_parms.append("%.2f" % parm)
-            elif type(parm) == list:
+            elif isinstance(parm, list):
                 new_parms.append(",".join(parm))
             elif parm == "false":
                 new_parms.append("0")
             elif parm == "true":
                 new_parms.append("1")
-            elif parm == "null" or parm == "None":
-                new_parms.append("")
             else:
                 new_parms.append(parm)
         new_parms.append(self.secret)
