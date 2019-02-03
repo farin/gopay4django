@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 from binascii import unhexlify
 from hashlib import sha1
 from Crypto.Cipher import DES3
@@ -52,18 +53,30 @@ class GoCrypt(object):
         hashed_command = self.hash(command)
         des = DES3.new(self.secret, DES3.MODE_ECB)
         result = des.encrypt(hashed_command)
-        return result.encode('hex')
+        if sys.version_info[0] < 3:
+            return result.encode('hex')
+        else:
+            return result.hex()
 
     def encrypt_pydes(self, command):
         hashed_command = self.hash(command)
         des = triple_des(self.secret)
         result = des.encrypt(hashed_command)
-        return result.encode('hex')
+        if sys.version_info[0] < 3:
+            return result.encode('hex')
+        else:
+            return result.hex()
 
     def decrypt(self, encrypted_data):
         des = DES3.new(self.secret, DES3.MODE_ECB)
-        return des.decrypt(unhexlify(encrypted_data)).rstrip('\x00')
+        data = des.decrypt(unhexlify(encrypted_data))
+        if sys.version_info[0] >= 3:
+            data = data.decode('ascii')
+        return data.rstrip('\x00')
 
     def decrypt_pydes(self, encrypted_data):
         des = triple_des(self.secret)
-        return des.decrypt(unhexlify(encrypted_data)).rstrip('\x00')
+        data = des.decrypt(unhexlify(encrypted_data))
+        if sys.version_info[0] >= 3:
+            data = data.decode('ascii')
+        return data.rstrip('\x00')
